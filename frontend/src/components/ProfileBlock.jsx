@@ -3,11 +3,13 @@ import SingleButton from './comp/SingleButton';
 import { IoPersonAdd } from "react-icons/io5";
 import { TbMessage } from "react-icons/tb";
 import { useAuthStore } from '../store/authStore';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function ProfileBlock({user, setOneBlock, oneBlock}) {
   const { error } = useAuthStore(state => state);
   const { userId } = useParams();  // Get userId from URL
+  const location = useLocation()
   const followButtonData = {
     color: 'bg-green-500',
     hoverColor: 'hover:bg-zinc-700/70',
@@ -22,6 +24,12 @@ function ProfileBlock({user, setOneBlock, oneBlock}) {
     icon: <TbMessage />
   }
   const text = user?.bio || "no bio yet";
+
+  // useEffect(() => {
+  //   if (location.pathname.startsWith('/profile')) {
+  //     setOneBlock(!oneBlock); // Ensure oneBlock is true when on /profile or any sub-path
+  //   }
+  // }, [location.pathname, setOneBlock]);
 
   // const maxChars = 200;
   // const truncatedText = text.length > maxChars ? text.substring(0, maxChars) + "..." : text;

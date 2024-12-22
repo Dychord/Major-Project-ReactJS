@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { usePostStore } from '../store/postsStore.js'; // Import Zustand store
 import axiosInstance from '../utils/axios.js';
-
+import { useStateExtra } from '../store/extraStore.js';
 function AccountPosts({ userId }) {
   const { posts, loading, error, setPosts, setLoading, setError } = usePostStore();
-
-
+  const {postZoomState, setPostZoomState} = useStateExtra()
   //   // Reset posts to an empty array whenever the component is unmounted or userId changes
 
   // }, [userId, setPosts]);
@@ -47,7 +46,7 @@ function AccountPosts({ userId }) {
   if (error) {
     return <div className="text-center text-lg text-red-500">{error}</div>;
   }
-  
+  console.log(postZoomState);
   // Check if posts is an array and has content
   if (!Array.isArray(posts) || posts.length === 0) {
     return (
@@ -59,7 +58,7 @@ function AccountPosts({ userId }) {
   return (
     <div className="grid grid-cols-3 gap-4 p-4">
       {posts.map((post, index) => (
-        <div
+        <div onClick={()=>setPostZoomState()}
           key={index}
           className="hover:scale-105 transition transform rounded overflow-hidden shadow-lg"
         >
