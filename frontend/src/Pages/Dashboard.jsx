@@ -9,7 +9,8 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import SuggestedUsers from '../components/SuggestUsers';
 
 function Dashboard() {
-  const { isAuthenticated, isLoading, isCheckingAuth, user } = useAuthStore();
+  const { isAuthenticated, isLoading, isCheckingAuth } = useAuthStore();
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuthenticated) {

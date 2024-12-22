@@ -46,7 +46,6 @@ function AccountPosts({ userId }) {
   if (error) {
     return <div className="text-center text-lg text-red-500">{error}</div>;
   }
-  console.log(postZoomState);
   // Check if posts is an array and has content
   if (!Array.isArray(posts) || posts.length === 0) {
     return (

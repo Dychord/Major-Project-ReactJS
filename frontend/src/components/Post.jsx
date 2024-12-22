@@ -7,12 +7,16 @@ import { MdDelete } from "react-icons/md";
 import { useAuthStore } from "../store/authStore.js";
 import { usePostStore } from "../store/postsStore.js";
 import { useNavigate } from "react-router-dom";
+import { useStateExtra } from "../store/extraStore.js";
+import PostZoom from "./profilePageComponents/PostZoom.jsx";
 
 const Posts = () => {
   const { user } = useAuthStore();
   const { posts, setPosts, removePost, savedPosts, toggleSavedPost } = usePostStore();
+  const { postZoomState, setPostZoomState } = useStateExtra()
+
   const navigate = useNavigate()
-  
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -26,7 +30,7 @@ const Posts = () => {
     if (user._id) {
       fetchPosts();
     }
-  }, [user._id, posts]);
+  }, [user._id, setPosts]);
 
   const handleLikePost = async (postId, post) => {
     try {
@@ -59,7 +63,6 @@ const Posts = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    console.log(postId);
     const confirmed = window.confirm("Are you sure you want to delete this post?");
     if (confirmed) {
       try {
@@ -79,6 +82,7 @@ const Posts = () => {
 
   return (
     <div className="space-y-4">
+
       {posts.map((post, index) => (
         <div key={index} className="border border-gray-300 rounded-lg shadow-md bg-zinc-800">
           {/* Post Header */}
@@ -88,7 +92,7 @@ const Posts = () => {
               className="cursor-pointer w-10 h-10 rounded-full mr-3"
             />
             <div className="flex-grow">
-              <span onClick={()=>handleUserClick(post.userId._id)} className="font-semibold cursor-pointer">{post.userId.username}</span>
+              <span onClick={() => handleUserClick(post.userId._id)} className="font-semibold cursor-pointer">{post.userId.username}</span>
               <span className="text-gray-500 text-sm ml-2">
                 {new Date(post.createdAt).toLocaleString()}
               </span>
@@ -109,7 +113,7 @@ const Posts = () => {
           </div>
 
           {/* Post Images */}
-          <div className="p-2 w-full space-y-2">
+          <div onClick={() => setPostZoomState()} className="p-2 w-full space-y-2">
             {post.images.map((image, index) => (
               <img
                 key={index}
@@ -136,9 +140,8 @@ const Posts = () => {
               <AiOutlineMessage /> <span>{post.comments?.length}</span>
             </button>
             <button
-              className={`hover:text-blue-500 ${
-                savedPosts[post.id] ? "text-green-500" : "text-gray-500"
-              }`}
+              className={`hover:text-blue-500 ${savedPosts[post.id] ? "text-green-500" : "text-gray-500"
+                }`}
               onClick={() => handleSavePost(post.id)}
             >
               <GiSaveArrow />
@@ -146,6 +149,11 @@ const Posts = () => {
           </div>
         </div>
       ))}
+      {postZoomState && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center">
+          <PostZoom />
+        </div>
+      )}
     </div>
   );
 };
