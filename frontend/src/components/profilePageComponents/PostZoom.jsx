@@ -1,12 +1,32 @@
-import React from 'react';
-import { useStateExtra } from '../../store/extraStore.js'
+import React, { useEffect, useRef } from 'react';
+import { useStateExtra } from '../../store/extraStore.js';
 
 const PostZoom = () => {
   const { setPostZoomState } = useStateExtra(); // Access the toggle function from Zustand
+  const containerRef = useRef(null);
+
+  const handleOutsideClick = (event) => {
+    if (containerRef.current && !containerRef.current.contains(event.target)) {
+      setPostZoomState(false); // Close the PostZoom when clicking outside
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener for clicks
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      // Clean up event listener
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
   return (
-    <div className=" text-white fixed inset-0 z-50 flex items-center justify-center">
-      <div className="max-w-4xl bg-zinc-800 mx-auto flex flex-col md:flex-row relative">
+    <div className="text-white fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div
+        className="max-w-4xl bg-zinc-800 mx-auto flex flex-col md:flex-row relative rounded-lg"
+        ref={containerRef} // Attach ref to the main container
+      >
         {/* Close Button */}
         <button
           className="absolute top-2 right-2 text-white bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition"
@@ -19,7 +39,7 @@ const PostZoom = () => {
         <div className="md:w-1/2">
           <img
             alt="A black and white image of a shirtless man taking a mirror selfie"
-            className="w-full"
+            className="w-full rounded-l-lg"
             height="800"
             src="https://storage.googleapis.com/a1aa/image/aItgjywcl1qfZahjNriKzweivTWQlEiOw78N0U7Z1oE6gE8TA.jpg"
             width="600"
