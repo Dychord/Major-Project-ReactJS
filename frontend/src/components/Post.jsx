@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/axios.js";
 import { FcLike } from "react-icons/fc";
 import { GiSaveArrow } from "react-icons/gi";
@@ -14,23 +14,9 @@ const Posts = () => {
   const { user } = useAuthStore();
   const { posts, setPosts, removePost, savedPosts, toggleSavedPost } = usePostStore();
   const { postZoomState, setPostZoomState } = useStateExtra()
+  const [commentText, setCommentText] = useState('')
 
   const navigate = useNavigate()
-
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axiosInstance.get(`/posts/${user._id}`);
-        setPosts(response.data);
-      } catch (err) {
-        console.error("Failed to load posts.", err);
-      }
-    };
-    if (user._id) {
-      fetchPosts();
-    }
-  }, [user._id, setPosts]);
 
   const handleLikePost = async (postId, post) => {
     try {
@@ -54,9 +40,16 @@ const Posts = () => {
     }
   };
 
+  // const handleComment = async (postId, comment) => {
+  //   try {
+  //     await axiosInstance.post(`/comments/${postId}`, { text: comment });
+  //   } catch (err) {
+  //     console.error("Error adding comment", err);
+  //   }
+  // };
   const handleComment = async (postId, comment) => {
     try {
-      await axiosInstance.post(`/comments/${postId}`, { text: comment });
+      alert(comment)
     } catch (err) {
       console.error("Error adding comment", err);
     }
@@ -77,6 +70,22 @@ const Posts = () => {
   const handleUserClick = (userId) => {
     navigate(`/profile/${userId}`);
   };
+
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axiosInstance.get(`/posts/${user._id}`);
+        setPosts(response.data);
+      } catch (err) {
+        console.error("Failed to load posts.", err);
+      }
+    };
+    if (user._id) {
+      fetchPosts();
+    }
+  }, [user._id, setPosts]);
+
 
   if (!posts.length) return <div className="text-gray-400">No posts to display.</div>;
 
@@ -135,7 +144,7 @@ const Posts = () => {
 
             <button
               className="text-gray-500 hover:text-blue-500 flex items-center space-x-1"
-              onClick={() => handleComment(post.id, "Your comment here")}
+              onClick={() => handleComment(post.id, commentText)}
             >
               <AiOutlineMessage /> <span>{post.comments?.length}</span>
             </button>
@@ -146,6 +155,10 @@ const Posts = () => {
             >
               <GiSaveArrow />
             </button>
+          </div>
+          <div className="flex items-center w-full">
+            <input onChange={(e)=>setCommentText(e.target.value)} type="text" className=" p-2 bg-zinc-900 outline-none w-full" />
+            <button className="px-4 py-2 bg-zinc-900">send</button>
           </div>
         </div>
       ))}
